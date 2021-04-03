@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% block content %}
+<script>
+  function handleEdit(event, userId) {
+    event.preventDefault();
+    window.location.replace(`/users/${userId}`);
+  }
+  function handleDelete(event, userId) {
+    event.preventDefault();
+    const shouldDeleteUser = confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (shouldDeleteUser) {
+      $.ajax(`/users/${userId}`, {
+        type: "DELETE",
+      })
+        .done(function (data) {
+          alert("User has been successfully deleted.");
+          window.location.reload();
+        })
+        .fail(function () {
+          console.error("There was an error while deleting an user");
+          alert("Failed to delete the user.");
+        });
+    }
+  }
+</script>
+<div class="container mt-3">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{user.first_name}}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.email}}</td>
+        <td><a onclick="handleEdit(event,'{{user.id}}')" href="">Edit</a></td>
+        <td>
+          <a
+            onclick="handleDelete(event,'{{user.id}}')"
+            href=""
+            style="color: red"
+            >Delete</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

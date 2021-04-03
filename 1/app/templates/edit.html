@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-3">
+  <div
+    class="alert alert-danger mb-3"
+    id="user-failed-alert"
+    style="display: none"
+    role="alert"
+  >
+    Failed to update user!
+  </div>
+  <form class="add-user-form">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input
+        type="email"
+        name="email"
+        value="{{user.email}}"
+        class="form-control"
+        id="email"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="first_name" class="form-label">First Name</label>
+      <input
+        type="text"
+        name="first_name"
+        value="{{user.first_name}}"
+        class="form-control"
+        id="first_name"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="last_name" class="form-label">Last Name</label>
+      <input
+        type="text"
+        name="last_name"
+        value="{{user.last_name}}"
+        class="form-control"
+        id="last_name"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+  </form>
+  <script>
+    $(".add-user-form").submit(function (event) {
+      event.preventDefault();
+      const email = $("#email").val();
+      const firstName = $("#first_name").val();
+      const lastName = $("#last_name").val();
+      const dataToSend = { email, first_name: firstName, last_name: lastName };
+      $.ajax("/users/{{user.id}}", {
+        type: "PUT",
+        data: dataToSend,
+      })
+        .done(function (data) {
+          $("#user-failed-alert").hide();
+          window.location.replace("/users");
+        })
+        .fail(function () {
+          console.error("There was an error while updating the user");
+          $("#user-failed-alert").show();
+        });
+    });
+  </script>
+</div>
+{% endblock %}
